@@ -17,10 +17,7 @@ function Main() {
     <div>
         <Routes>
             <Route path='/' element={<OverviewDashboard />}></Route>
-            <Route path='/staffs' element={<StaffsDashboard />}></Route>
-            <Route path='/preference-settings' element={<Preference />}></Route>
-            <Route path='/profile-settings' element={<EditProfileForm initialValues={data}/>}></Route>
-            <Route path="/logout" element={<Login />}> </Route>
+            <Route path='/officers' element={<StaffsDashboard />}></Route>
         </Routes>
     </div>
   );

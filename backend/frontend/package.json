@@ -1,7 +1,8 @@
 {
-  "name": "fpvantd",
+  "name": "frontend",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:8001",
   "dependencies": {
     "@ant-design/icons": "^5.0.1",
     "@emotion/react": "^11.10.6",

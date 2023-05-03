@@ -20,8 +20,8 @@ const items = [
   {
     key: '2',
     icon: <MdOutlineGroups />,
-    label: 'Staffs',
-    link: '/staffs'
+    label: 'Officers',
+    link: '/officers'
   },
 
   {
@@ -31,10 +31,10 @@ const items = [
     
   },
   {
-    key: '7',
+    key: '5',
     icon: <TbLogout />,
     label: 'Logout',
-    link: '/logout'
+  
   }
 ];
 const AdminDashboard = () => {

@@ -2,18 +2,21 @@ from django.db import models
 from django.utils import timezone
 
 
-class Officer(models.Model):
+class officer(models.Model):
     o_id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=255)
-    email = models.EmailField()
+    full_name = models.CharField(max_length=255)
+    phone_number = models.EmailField()
     logon_name = models.CharField(max_length=255)
     password = models.CharField(max_length=255)
     address = models.CharField(max_length=255)
     status = models.CharField(max_length=255)
     role = models.CharField(max_length=255)
-    team_id = models.ForeignKey('Team', on_delete=models.CASCADE)
+    team = models.ForeignKey('Team', on_delete=models.CASCADE)
     rank = models.CharField(max_length=255)
     photo = models.ImageField(upload_to='officer_photos/')
+
+    class Meta:
+        app_label = 'backend'
 
 
 class Cases(models.Model):
@@ -58,7 +61,7 @@ class Civilian(models.Model):
 
 class Privileges(models.Model):
     privilege_id = models.AutoField(primary_key=True)
-    o_id = models.ForeignKey(Officer, on_delete=models.CASCADE)
+    o_id = models.ForeignKey(officer, on_delete=models.CASCADE)
     privilege_name = models.CharField(max_length=255)
 
 
@@ -66,7 +69,7 @@ class ActivityLog(models.Model):
     log_id = models.AutoField(primary_key=True)
     activity_type = models.CharField(max_length=255)
     activity_time = models.DateTimeField()
-    o_id = models.ForeignKey(Officer, on_delete=models.CASCADE)
+    o_id = models.ForeignKey(officer, on_delete=models.CASCADE)
 
 
 class Evidences(models.Model):
@@ -100,12 +103,12 @@ class FIR(models.Model):
     date = models.DateField()
     time = models.TimeField()
     description = models.TextField()
-    o_id = models.ForeignKey(Officer, on_delete=models.CASCADE)
+    o_id = models.ForeignKey(officer, on_delete=models.CASCADE)
 
 
 class Post(models.Model):
     post_id = models.AutoField(primary_key=True)
-    o_id = models.ForeignKey(Officer, on_delete=models.CASCADE)
+    o_id = models.ForeignKey(officer, on_delete=models.CASCADE)
     post_type = models.CharField(max_length=50)
     post_date = models.DateTimeField(default=timezone.now)
     post_description = models.TextField()

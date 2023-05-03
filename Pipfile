@@ -8,6 +8,8 @@ django = "*"
 pyodbc = "*"
 django-pyodbc-azure = "*"
 sqlalchemy = "*"
+pillow = "*"
+djangorestframework = "*"
 
 [dev-packages]
 
