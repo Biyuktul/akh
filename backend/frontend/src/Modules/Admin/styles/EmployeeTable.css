@@ -1,0 +1,124 @@
+
+.employee-table-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+.employee-table {
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    font-size: 16px;
+  }
+  
+.employee-table th,
+.employee-table td {
+    padding: 8px;
+    text-align: left;
+    vertical-align: middle;
+    border: 1px solid #ddd;
+}
+
+.employee-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+.employee-photo {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: center;
+    margin-right: 10px;
+}
+
+.employee-table a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.employee-table tbody tr {
+    margin: 5px 0;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease-in-out;
+}
+
+.employee-table tbody tr:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+  
+  .pagination {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 5px;
+    margin-bottom: 1rem;
+  }
+  
+  .previous-button,
+  .next-button {
+    background-color: #009688;
+    border: none;
+    border-radius: 0.25rem;
+    color: white;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    margin-right: 0.5rem;
+  }
+  
+  .previous-button:hover,
+  .next-button:hover {
+    background-color: #00796b;
+  }
+  
+  .previous-button[disabled],
+  .next-button[disabled] {
+    background-color: #ccc;
+    cursor: default;
+  }
+  
+  .page-numbers {
+    color: #555;
+    font-size: 1rem;
+    margin: 0 1rem;
+  }
+  .search-input {
+    padding: 10px;
+    border: 1px solid #1d1d2c;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    width: 100%;
+    max-width: 500px;
+    max-height: 10px;
+    font-size: 16px;
+    /* justify-self: center; */
+    margin-top: 35px;
+  }
+  
+  .search-input:focus {
+    outline: none;
+    border-color: #fd8282;
+  }
+  .add-button{
+    border-radius: 4px;
+    background-color: #1d1d2c;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    cursor: pointer;
+    width: 300px;
+    text-align: center;
+  }
+  
+.add-button:hover {
+    background-color: #262641;
+  }
+
+  

@@ -1,0 +1,55 @@
+.overview-container {
+        display: grid;
+        grid-template-rows: auto 2fr 1fr;
+        grid-template-columns: auto;
+        grid-template-areas: 
+            "card-container card-container"
+            "report report";
+        height: 100vh;
+        
+    }
+    
+    .card-container {
+        grid-area: card-container;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        margin: 50px 45px 25px 45px;
+    }
+
+    
+    .report-container2 {
+        grid-area: report;
+        margin-top: 30px;
+        width: auto;
+        height: fit-content;
+        margin-right: 45px;
+        margin-left: 45px;
+    }
+    
+    /* Card Section */
+    .card {
+        /* display: flex; */
+        height: 8rem;
+        width: 12rem;
+        border-radius: .3rem;
+        box-shadow: 5px 10px 25px 2px rgb(95, 95, 95);
+        transition: transform 0.3s ease;
+        background-color: #001529;
+        color: rgb(62, 111, 153);
+    }
+    
+    .card-header *{
+        font-size: 30px;
+    }
+    
+    .card-header h1{
+        font-family: Montserrat;
+    }
+    
+    .card:hover,
+    .card:focus-visible {
+      transform: translateY(-10px);
+    }
+    
+    /* End of Card Section */

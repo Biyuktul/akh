@@ -1,0 +1,65 @@
+*:not(iframe, canvas, img, svg, video):not(svg *) {    
+    all: unset;    
+    display: revert;
+}
+.container {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    grid-template-rows: auto 1fr;
+    grid-template-areas: 
+        "sidebar header"
+        "sidebar main";
+    height: 100vh;
+}
+
+.side-bar {
+    grid-area: sidebar;
+}
+
+.app-bar {
+    grid-area: header;
+}
+
+.main {
+    grid-area: main;
+    background-color: lightgray;
+
+}
+
+
+
+/*Staff Dashboard Section*/
+.staff-container {
+    /* border: 1px solid tomato; */
+    display: grid;
+    grid-template-rows: auto 1fr;
+    grid-template-areas: 
+        "employee-table employee-table add-button"
+        "employee-table employee-table permission-box";
+    height: 100vh;
+}
+
+
+.employee-table-container {
+    grid-area: employee-table;
+    /* border: 2px solid red; */
+    display: flex;
+    justify-content: center;
+}
+
+.permission-box-container {
+    grid-area: permission-box;
+    /* border: 2px solid purple; */
+    display: flex;
+    justify-content: center;
+    padding-top: 10px;
+}
+
+.button-container {
+    grid-area: add-button;
+    /* border: 2px solid rgb(4, 0, 255); */
+    display: flex;
+    justify-content: center;
+    padding-top: 30px;
+    padding-bottom: 10px;
+}

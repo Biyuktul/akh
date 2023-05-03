@@ -1,0 +1,41 @@
+.login-container {
+    height: 100vh;
+    background-color: #1d1d2c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-card {
+    height: 70%;
+    width: 30%;
+    background-color: aliceblue;
+    border-radius: 15px;
+    display: grid;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.login-card img{
+    width: 150px;
+    height: 150px;
+    justify-self: center;
+}
+
+.login-card h1 {
+    font-size: 35px;
+}
+
+.login-card p{
+    font-size: 20px;
+}
+
+.login-btn {
+    background-color: #1e1e4e;
+    width: 200px;
+    justify-self: center;
+    padding: 12px;
+    border-radius: 14px;
+    color: aliceblue;
+}

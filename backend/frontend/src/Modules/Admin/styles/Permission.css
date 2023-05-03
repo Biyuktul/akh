@@ -1,0 +1,98 @@
+.permission-box {
+    width: 300px;
+    height: 77%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 20px;
+    box-sizing: border-box;
+    box-shadow: 5px 5px 10px 5px rgba(88, 87, 87, 0.2);
+}
+  
+.permission-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.permission-item label {
+    margin-left: 10px;
+    font-size: 1rem;
+}
+  
+.permission-item input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid #1d1d2c;
+    appearance: none;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+  
+.permission-item input[type="checkbox"]:checked {
+    background-color: #333;
+    border-color: #333;
+}
+  
+.permission-item input[type="checkbox"]:checked::after {
+    content: "\2714";
+    color: #fff;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.permission-box {
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 5px;
+    width: 400px;
+}
+  
+  .permission-box h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .permission-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+    width: 100%;
+  }
+  .permission-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .permission-row label {
+    margin-right: 10px;
+    font-weight: bold;
+  }
+  
+  .save-button {
+    background-color: #1d1d2c;
+    color: white;
+    border-radius: 5px;
+    padding: 10px 20px;
+    margin-top: 10px;
+    cursor: pointer;
+    border: none;
+    width: fit-content;
+    align-self: center;
+  }
+  
+  .save-button:hover {
+    background-color: #0d0d14;
+  }
+  
