@@ -12,6 +12,8 @@ function StaffTable({ employees }) {
   const handleSearch = (event) => {
     setSearch(event.target.value);
   };
+  
+  console.log(employees)
 
   const handleTableChange = (pagination, filters, sorter) => {
     setCurrentPage(pagination.current);
@@ -33,12 +35,12 @@ function StaffTable({ employees }) {
     },
     {
       title: 'ID',
-      dataIndex: 'id',
+      dataIndex: 'o_id',
       key: 'id',
     },
     {
       title: 'Name',
-      dataIndex: 'name',
+      dataIndex: 'full_name',
       key: 'name',
     },
     {
@@ -63,7 +65,7 @@ function StaffTable({ employees }) {
     },
     {
       title: 'Phone Number',
-      dataIndex: 'phone',
+      dataIndex: 'phone_number',
       key: 'phone',
       className: 'salary',
     },
@@ -88,7 +90,7 @@ function StaffTable({ employees }) {
   ];
 
   const filteredEmployees = employees.filter((employee) =>
-    employee.name.toLowerCase().includes(search.toLowerCase())
+    employee.full_name.toLowerCase().includes(search.toLowerCase())
   );
   
 

@@ -10,8 +10,8 @@ const PopupFormButton = ({text, formTitle, selectedEmployee}) => {
     if (selectedEmployee) {
       form.setFieldsValue({
         id: selectedEmployee.id,
-        name: selectedEmployee.name,
-        phone: selectedEmployee.phone,
+        name: selectedEmployee.full_name,
+        phone: selectedEmployee.phone_number,
         role: selectedEmployee.role,
         logon_name: selectedEmployee.logon_name,
         password: selectedEmployee.password,

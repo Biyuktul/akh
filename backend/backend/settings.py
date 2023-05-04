@@ -24,6 +24,8 @@ SECRET_KEY = 'f@-!sb$@bz(dkr9c2rx%+h9_%w3rgyv$n4g4$a*1#e+=_-3!w3'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+APPEND_SLASH = False
+
 
 ALLOWED_HOSTS = []
 
@@ -38,7 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'frontend',
     'backend'
 ]
 
@@ -58,7 +59,6 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [os.path.join(BASE_DIR, 'frontend/build')],
-        # 'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

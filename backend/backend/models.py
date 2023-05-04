@@ -1,11 +1,13 @@
 from django.db import models
 from django.utils import timezone
+import shortuuid
 
 
 class officer(models.Model):
-    o_id = models.AutoField(primary_key=True)
+    o_id = models.CharField(
+        max_length=22, primary_key=True, default=shortuuid.uuid)
     full_name = models.CharField(max_length=255)
-    phone_number = models.EmailField()
+    phone_number = models.CharField(max_length=255)
     logon_name = models.CharField(max_length=255)
     password = models.CharField(max_length=255)
     address = models.CharField(max_length=255)

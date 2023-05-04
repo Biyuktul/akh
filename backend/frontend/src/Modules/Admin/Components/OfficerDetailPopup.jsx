@@ -52,12 +52,12 @@ const OfficerDetail = ({ selectedEmployee }) => {
               <Col span={12}>
                 <Text strong>ID:</Text>
                 <br />
-                <Text>{selectedEmployee.id}</Text>
+                <Text>{selectedEmployee.o_id}</Text>
               </Col>
               <Col span={12}>
                 <Text strong>Full Name:</Text>
                 <br />
-                <Text>{selectedEmployee.name}</Text>
+                <Text>{selectedEmployee.full_name}</Text>
               </Col>
             </Row>
             <br />
@@ -65,7 +65,7 @@ const OfficerDetail = ({ selectedEmployee }) => {
               <Col span={12}>
                 <Text strong>Phone number:</Text>
                 <br />
-                <Text>{selectedEmployee.phone}</Text>
+                <Text>{selectedEmployee.phone_number}</Text>
               </Col>
               <Col span={12}>
                 <Text strong>Role:</Text>

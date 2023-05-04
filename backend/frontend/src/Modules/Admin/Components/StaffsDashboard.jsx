@@ -1,5 +1,5 @@
 import StaffTable from './StaffTable';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import '../styles/App.css';
 
@@ -29,7 +29,7 @@ import '../styles/App.css';
 function StaffsDashboard() {
   const [officers, setOfficers] = useState([]);
   useEffect(() => {
-    fetch('/api/officers/')
+    fetch('officers/')
       .then(res => res.json())
       .then(data => setOfficers(data))
       .catch(err => console.error(err));
