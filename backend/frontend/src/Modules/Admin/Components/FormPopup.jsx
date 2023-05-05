@@ -2,16 +2,16 @@ import { useState, useEffect } from 'react';
 import { Button, Modal, Form, Input, Upload, Select } from 'antd';
 const { Option } = Select;
 
-const PopupFormButton = ({text, formTitle, selectedEmployee}) => {
+const PopupFormButton = ({text, formTitle, selectedEmployee, setOfficers, officers}) => {
   const [visible, setVisible] = useState(false);
   const [form] = Form.useForm();
 
   useEffect(() => {
     if (selectedEmployee) {
       form.setFieldsValue({
-        id: selectedEmployee.id,
-        name: selectedEmployee.full_name,
-        phone: selectedEmployee.phone_number,
+        o_id: selectedEmployee.id,
+        full_name: selectedEmployee.full_name,
+        phone_number: selectedEmployee.phone_number,
         role: selectedEmployee.role,
         logon_name: selectedEmployee.logon_name,
         password: selectedEmployee.password,
@@ -22,7 +22,8 @@ const PopupFormButton = ({text, formTitle, selectedEmployee}) => {
   }, [selectedEmployee, form]);
   
   const onFinish = (values) => {
-    console.log('Received values of form:', values);
+    setOfficers([...officers, values]);
+    console.log(officers);
   };
 
   const onFinishFailed = (errorInfo) => {
@@ -83,7 +84,7 @@ const PopupFormButton = ({text, formTitle, selectedEmployee}) => {
         >
           <Form.Item
             label="Full Name"
-            name="name"
+            name="full_name"
             rules={[
               {
                 required: true,
@@ -96,7 +97,7 @@ const PopupFormButton = ({text, formTitle, selectedEmployee}) => {
 
           <Form.Item
             label="Phone Number"
-            name="phone"
+            name="phone_number"
             rules={[
               {
                 required: true,

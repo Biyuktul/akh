@@ -74,8 +74,8 @@ export default function AppBarMU() {
 
   if (location.pathname === "/") {
     pageText = 'Overview';
-  } else if (location.pathname === "/staffs") {
-    pageText = 'Staff Management';
+  } else if (location.pathname === "/officers") {
+    pageText = 'Officer Management';
   } else {
     pageText = "Page not found";
   }

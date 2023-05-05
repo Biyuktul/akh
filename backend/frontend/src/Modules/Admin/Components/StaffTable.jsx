@@ -4,7 +4,7 @@ import PopupFormButton from './FormPopup';
 import ConfirmPopup from './ConfirmPopup';
 import OfficerDetail from './OfficerDetailPopup';
 
-function StaffTable({ employees }) {
+function StaffTable({ employees, setOfficers }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
   const [selectedEmployee, setSelectedEmployee] = useState(null)
@@ -93,7 +93,6 @@ function StaffTable({ employees }) {
     employee.full_name.toLowerCase().includes(search.toLowerCase())
   );
   
-
   return (
     <div>
       <div className="flex justify-center mb-5  mt-10">
@@ -105,7 +104,7 @@ function StaffTable({ employees }) {
         onChange={handleSearch}
         className="search-input mr-20"
       />
-      <PopupFormButton text={"Add Officers"} formTitle={"New Officer Registration Form"}></PopupFormButton>
+      <PopupFormButton text={"Add Officers"} formTitle={"New Officer Registration Form"} setOfficers={setOfficers} officers={employees}></PopupFormButton>
       </div>
       
       <Table

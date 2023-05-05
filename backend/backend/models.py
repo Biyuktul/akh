@@ -15,7 +15,6 @@ class officer(models.Model):
     role = models.CharField(max_length=255)
     team = models.ForeignKey('Team', on_delete=models.CASCADE)
     rank = models.CharField(max_length=255)
-    photo = models.ImageField(upload_to='officer_photos/')
 
     class Meta:
         app_label = 'backend'
@@ -29,11 +28,17 @@ class Cases(models.Model):
     date_updated = models.DateField()
     team_id = models.ForeignKey('Team', on_delete=models.CASCADE)
 
+    class Meta:
+        app_label = 'backend'
+
 
 class Team(models.Model):
     team_id = models.AutoField(primary_key=True)
-    case_id = models.ForeignKey(Cases, on_delete=models.CASCADE)
+    case = models.ForeignKey(Cases, on_delete=models.CASCADE)
     date_created = models.DateField()
+
+    class Meta:
+        app_label = 'backend'
 
 
 class Complaints(models.Model):
@@ -44,6 +49,9 @@ class Complaints(models.Model):
     location = models.CharField(max_length=255)
     status = models.CharField(max_length=255)
 
+    class Meta:
+        app_label = 'backend'
+
 
 class Criminals(models.Model):
     criminal_id = models.AutoField(primary_key=True)
@@ -53,6 +61,9 @@ class Criminals(models.Model):
     crime_type = models.CharField(max_length=255)
     description = models.TextField()
 
+    class Meta:
+        app_label = 'backend'
+
 
 class Civilian(models.Model):
     civilian_id = models.AutoField(primary_key=True)
@@ -60,11 +71,17 @@ class Civilian(models.Model):
     phone = models.CharField(max_length=20)
     address = models.CharField(max_length=255)
 
+    class Meta:
+        app_label = 'backend'
+
 
 class Privileges(models.Model):
     privilege_id = models.AutoField(primary_key=True)
     o_id = models.ForeignKey(officer, on_delete=models.CASCADE)
     privilege_name = models.CharField(max_length=255)
+
+    class Meta:
+        app_label = 'backend'
 
 
 class ActivityLog(models.Model):
@@ -72,6 +89,9 @@ class ActivityLog(models.Model):
     activity_type = models.CharField(max_length=255)
     activity_time = models.DateTimeField()
     o_id = models.ForeignKey(officer, on_delete=models.CASCADE)
+
+    class Meta:
+        app_label = 'backend'
 
 
 class Evidences(models.Model):
@@ -82,6 +102,9 @@ class Evidences(models.Model):
     evidence_type = models.CharField(max_length=255)
     evidence_data = models.FileField(upload_to='evidences/')
 
+    class Meta:
+        app_label = 'backend'
+
 
 class Witness(models.Model):
     wit_id = models.AutoField(primary_key=True)
@@ -89,6 +112,9 @@ class Witness(models.Model):
     name = models.CharField(max_length=255)
     address = models.CharField(max_length=255)
     phone = models.CharField(max_length=20)
+
+    class Meta:
+        app_label = 'backend'
 
 
 class Victims(models.Model):
@@ -98,6 +124,9 @@ class Victims(models.Model):
     address = models.CharField(max_length=255)
     phone = models.CharField(max_length=20)
 
+    class Meta:
+        app_label = 'backend'
+
 
 class FIR(models.Model):
     FIR_ID = models.AutoField(primary_key=True)
@@ -106,6 +135,9 @@ class FIR(models.Model):
     time = models.TimeField()
     description = models.TextField()
     o_id = models.ForeignKey(officer, on_delete=models.CASCADE)
+
+    class Meta:
+        app_label = 'backend'
 
 
 class Post(models.Model):
@@ -118,6 +150,9 @@ class Post(models.Model):
 
     def __str__(self):
         return self.post_type
+
+    class Meta:
+        app_label = 'backend'
 
 
 class Suspect(models.Model):
@@ -135,6 +170,9 @@ class Suspect(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        app_label = 'backend'
+
 
 class Warrant(models.Model):
     warrant_id = models.AutoField(primary_key=True)
@@ -148,6 +186,9 @@ class Warrant(models.Model):
     def __str__(self):
         return self.warrant_type
 
+    class Meta:
+        app_label = 'backend'
+
 
 class Verdict(models.Model):
     verdict_id = models.AutoField(primary_key=True)
@@ -158,3 +199,6 @@ class Verdict(models.Model):
 
     def __str__(self):
         return self.verdict_type
+
+    class Meta:
+        app_label = 'backend'
