@@ -10,6 +10,8 @@ django-pyodbc-azure = "*"
 sqlalchemy = "*"
 pillow = "*"
 djangorestframework = "*"
+shortuuid = "*"
+django-cors-headers = "*"
 
 [dev-packages]
 

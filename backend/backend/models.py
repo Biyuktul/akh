@@ -1,19 +1,19 @@
 from django.db import models
 from django.utils import timezone
-import shortuuid
+import uuid
 
 
 class officer(models.Model):
     o_id = models.CharField(
-        max_length=22, primary_key=True, default=shortuuid.uuid)
+        max_length=20, primary_key=True, default=uuid.uuid4, editable=False)
     full_name = models.CharField(max_length=255)
     phone_number = models.CharField(max_length=255)
     logon_name = models.CharField(max_length=255)
     password = models.CharField(max_length=255)
     address = models.CharField(max_length=255)
-    status = models.CharField(max_length=255)
+    status = models.CharField(max_length=255, null=True, default='New')
     role = models.CharField(max_length=255)
-    team = models.ForeignKey('Team', on_delete=models.CASCADE)
+    team = models.ForeignKey('Team', on_delete=models.CASCADE, null=True)
     rank = models.CharField(max_length=255)
 
     class Meta:

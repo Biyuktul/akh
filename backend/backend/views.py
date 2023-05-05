@@ -8,10 +8,6 @@ from .serializers import OfficerSerializer
 from .models import officer
 
 
-def index(request):
-    return render(request, 'index.html')
-
-
 # @api_view(['POST'])
 # def add_officer(request):
 #     serializer = OfficerSerializer(data=request.data)
