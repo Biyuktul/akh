@@ -1,11 +1,16 @@
 from django.db import models
 from django.utils import timezone
+from datetime import date
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import User
+
+
 import uuid
 
 
 class officer(models.Model):
     o_id = models.CharField(
-        max_length=20, primary_key=True, default=uuid.uuid4, editable=False)
+        max_length=255, primary_key=True, default=uuid.uuid4, editable=False)
     full_name = models.CharField(max_length=255)
     phone_number = models.CharField(max_length=255)
     logon_name = models.CharField(max_length=255)
@@ -14,10 +19,12 @@ class officer(models.Model):
     status = models.CharField(max_length=255, null=True, default='New')
     role = models.CharField(max_length=255)
     team = models.ForeignKey('Team', on_delete=models.CASCADE, null=True)
-    rank = models.CharField(max_length=255)
+    rank = models.CharField(max_length=255, null=True)
+    created_at = models.DateField(
+        default=date.today().strftime("%Y-%m-%d"), null=True)
 
     class Meta:
-        app_label = 'backend'
+        db_table = 'officers'
 
 
 class Cases(models.Model):
@@ -29,7 +36,7 @@ class Cases(models.Model):
     team_id = models.ForeignKey('Team', on_delete=models.CASCADE)
 
     class Meta:
-        app_label = 'backend'
+        db_table = 'cases'
 
 
 class Team(models.Model):
@@ -38,7 +45,7 @@ class Team(models.Model):
     date_created = models.DateField()
 
     class Meta:
-        app_label = 'backend'
+        db_table = 'teams'
 
 
 class Complaints(models.Model):
@@ -50,7 +57,7 @@ class Complaints(models.Model):
     status = models.CharField(max_length=255)
 
     class Meta:
-        app_label = 'backend'
+        db_table = 'complaints'
 
 
 class Criminals(models.Model):
@@ -62,7 +69,7 @@ class Criminals(models.Model):
     description = models.TextField()
 
     class Meta:
-        app_label = 'backend'
+        db_table = 'criminals'
 
 
 class Civilian(models.Model):
@@ -72,7 +79,7 @@ class Civilian(models.Model):
     address = models.CharField(max_length=255)
 
     class Meta:
-        app_label = 'backend'
+        db_table = 'civilians'
 
 
 class Privileges(models.Model):

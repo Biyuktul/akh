@@ -4,7 +4,6 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-django = "*"
 pyodbc = "*"
 django-pyodbc-azure = "*"
 sqlalchemy = "*"
@@ -12,6 +11,10 @@ pillow = "*"
 djangorestframework = "*"
 shortuuid = "*"
 django-cors-headers = "*"
+django = "==2.1.15"
+djangorestframework-jwt = "*"
+pip = "*"
+install = "*"
 
 [dev-packages]
 
