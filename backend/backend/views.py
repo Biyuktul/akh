@@ -10,26 +10,23 @@ from rest_framework_jwt.utils import jwt_encode_handler, jwt_payload_handler
 from django.contrib.auth.hashers import check_password
 from .serializers import OfficerSerializer
 from .models import officer
+from rest_framework_simplejwt.tokens import AccessToken
 
 
 @api_view(['POST'])
 def login_view(request):
-    username = request.data.get('username')
+    logon_name = request.data.get('logon_name')
     password = request.data.get('password')
 
     try:
-        user = officer.objects.get(logon_name=username)
+        auth_officer = officer.objects.get(logon_name=logon_name)
+        if auth_officer.password == password:
+            token = AccessToken.for_user(auth_officer)
+            return Response({'token': str(token)})
+        else:
+            return Response({'error': 'Invalid credentials'}, status=400)
     except officer.DoesNotExist:
-        return Response({'error': 'Invalid credentials'}, status=400)
-
-    if user.password == password:
-        # Passwords match, proceed with login
-        login(request, user)
-        token, created = Token.objects.get_or_create(user=user)
-        return Response({'token': token.key})
-    else:
-        # Passwords do not match
-        return Response({'error': 'Invalid credentials'}, status=400)
+        return Response({'error': 'Officer not found'}, status=400)
 
 
 @api_view(['POST'])
@@ -45,9 +42,9 @@ def add_officer(request):
 
 
 @api_view(['PUT'])
-def update_officer(request, o_id):
+def update_officer(request, id):
     try:
-        office = officer.objects.get(o_id=o_id)
+        office = officer.objects.get(id=id)
     except officer.DoesNotExist:
         return HttpResponse(status=404)
 
@@ -68,7 +65,7 @@ def get_officers(request):
 @api_view(['GET'])
 def officers_per_month(request):
     officers = officer.objects.annotate(month=TruncMonth(
-        'created_at')).values('month').annotate(count=Count('o_id'))
+        'created_at')).values('month').annotate(count=Count('id'))
     data = [{'name': month['month'].strftime(
         '%b'), 'value': month['count']} for month in officers]
     return Response(data)

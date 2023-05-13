@@ -15,6 +15,7 @@ django = "==2.1.15"
 djangorestframework-jwt = "*"
 pip = "*"
 install = "*"
+djangorestframework-simplejwt = "*"
 
 [dev-packages]
 

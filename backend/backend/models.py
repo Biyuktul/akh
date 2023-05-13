@@ -3,14 +3,12 @@ from django.utils import timezone
 from datetime import date
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import User
-
-
 import uuid
 
 
 class officer(models.Model):
-    o_id = models.CharField(
-        max_length=255, primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.CharField(
+        max_length=255, primary_key=True, default=uuid.uuid4(), editable=False)
     full_name = models.CharField(max_length=255)
     phone_number = models.CharField(max_length=255)
     logon_name = models.CharField(max_length=255)
@@ -84,7 +82,7 @@ class Civilian(models.Model):
 
 class Privileges(models.Model):
     privilege_id = models.AutoField(primary_key=True)
-    o_id = models.ForeignKey(officer, on_delete=models.CASCADE)
+    id = models.ForeignKey(officer, on_delete=models.CASCADE)
     privilege_name = models.CharField(max_length=255)
 
     class Meta:
@@ -95,7 +93,7 @@ class ActivityLog(models.Model):
     log_id = models.AutoField(primary_key=True)
     activity_type = models.CharField(max_length=255)
     activity_time = models.DateTimeField()
-    o_id = models.ForeignKey(officer, on_delete=models.CASCADE)
+    id = models.ForeignKey(officer, on_delete=models.CASCADE)
 
     class Meta:
         app_label = 'backend'
@@ -141,7 +139,7 @@ class FIR(models.Model):
     date = models.DateField()
     time = models.TimeField()
     description = models.TextField()
-    o_id = models.ForeignKey(officer, on_delete=models.CASCADE)
+    id = models.ForeignKey(officer, on_delete=models.CASCADE)
 
     class Meta:
         app_label = 'backend'
@@ -149,7 +147,7 @@ class FIR(models.Model):
 
 class Post(models.Model):
     post_id = models.AutoField(primary_key=True)
-    o_id = models.ForeignKey(officer, on_delete=models.CASCADE)
+    id = models.ForeignKey(officer, on_delete=models.CASCADE)
     post_type = models.CharField(max_length=50)
     post_date = models.DateTimeField(default=timezone.now)
     post_description = models.TextField()

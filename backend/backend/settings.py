@@ -33,12 +33,14 @@ INSTALLED_APPS = [
 ]
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
 }
+
 JWT_AUTH = {
-    'JWT_SECRET_KEY': 'f@-!sb$@bz(dkr9c2rx%+h9_%w3rgyv$n4g4$a*1#e+=_-3!w3',
+    'JWT_SECRET_KEY': 'your-secret-key',  # Replace with your secret key
     'JWT_ALGORITHM': 'HS256',
+    'JWT_ALLOW_REFRESH': True,
     'JWT_EXPIRATION_DELTA': timedelta(days=1),
 }
 
@@ -46,13 +48,14 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'corsheaders.middleware.CorsMiddleware',
 ]
+
 # Allow requests from all origins
 CORS_ORIGIN_ALLOW_ALL = True
 
