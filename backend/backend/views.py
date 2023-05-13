@@ -22,7 +22,11 @@ def login_view(request):
         auth_officer = officer.objects.get(logon_name=logon_name)
         if auth_officer.password == password:
             token = AccessToken.for_user(auth_officer)
-            return Response({'token': str(token)})
+            serializer = OfficerSerializer(auth_officer)
+            return Response({
+                'token': str(token),
+                'officer': serializer.data
+            })
         else:
             return Response({'error': 'Invalid credentials'}, status=400)
     except officer.DoesNotExist:
