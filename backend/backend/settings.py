@@ -38,7 +38,7 @@ REST_FRAMEWORK = {
 }
 
 JWT_AUTH = {
-    'JWT_SECRET_KEY': 'your-secret-key',  # Replace with your secret key
+    'JWT_SECRET_KEY': 'f@-!sb$@bz(dkr9c2rx%+h9_%w3rgyv$n4g4$a*1#e+=_-3!w3',
     'JWT_ALGORITHM': 'HS256',
     'JWT_ALLOW_REFRESH': True,
     'JWT_EXPIRATION_DELTA': timedelta(days=1),
