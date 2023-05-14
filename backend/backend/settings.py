@@ -91,7 +91,7 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "sql_server.pyodbc",
-        "NAME": "police_rms",
+        "NAME": "police_rms_new",
         "HOST": "_YON\YONINSTANCE",
         "PORT": "",
         "OPTIONS": {"driver": "ODBC Driver 17 for SQL Server",

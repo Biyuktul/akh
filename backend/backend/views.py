@@ -8,8 +8,8 @@ from django.db.models import Count
 from django.contrib.auth import authenticate, login
 from rest_framework_jwt.utils import jwt_encode_handler, jwt_payload_handler
 from django.contrib.auth.hashers import check_password
-from .serializers import OfficerSerializer
-from .models import officer
+from .serializers import OfficerSerializer, PrivilegeSerializer
+from .models import officer, Privileges
 from rest_framework_simplejwt.tokens import AccessToken
 
 
@@ -73,3 +73,33 @@ def officers_per_month(request):
     data = [{'name': month['month'].strftime(
         '%b'), 'value': month['count']} for month in officers]
     return Response(data)
+
+
+@api_view(['POST'])
+def update_officer_privileges(request):
+    officer_id = request.data.get('officerId')
+    privileges = request.data.get('privileges')
+
+    try:
+        officer_instance = officer.objects.get(id=officer_id)
+
+        Privileges.objects.filter(officer=officer_instance).delete()
+        for privilege_name in privileges:
+            privilege = Privileges.objects.create(
+                officer=officer_instance,
+                privilege_name=privilege_name
+            )
+            privilege.save()
+
+        return Response({'message': 'Privileges updated successfully'})
+    except officer.DoesNotExist:
+        return Response({'message': 'Officer not found'}, status=404)
+    except Exception as e:
+        return Response({'message': str(e)}, status=500)
+
+
+@api_view(['GET'])
+def get_privilages(request, id):
+    privileges = Privileges.objects.filter(officer_id=id)
+    serializer = PrivilegeSerializer(privileges, many=True)
+    return Response(serializer.data)
