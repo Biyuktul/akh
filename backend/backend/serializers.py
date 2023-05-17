@@ -38,7 +38,7 @@ class CaseSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class WitnessSerializer(serialier.ModelSerializer):
+class WitnessSerializer(serializers.ModelSerializer):
     class Meta:
         model = Witness
         fields = '__all__'

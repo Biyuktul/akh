@@ -71,9 +71,10 @@ class Cases(models.Model):
         max_length=255, primary_key=True, default=uuid.uuid4, editable=False)
     case_type = models.CharField(max_length=255, null=True)
     case_priority = models.CharField(max_length=255, null=True)
-    case_status = models.CharField(max_length=255, null=True)
+    case_status = models.CharField(max_length=255, default="New", null=True)
     case_description = models.TextField(max_length=255, null=True)
-    case_created_date = models.DateField(null=True)
+    case_created_date = models.DateField(
+        null=True, default=date.today().strftime("%Y-%m-%d"))
     date_updated = models.DateField(null=True)
     incident_date = models.DateField(null=True)
     case_note = models.CharField(max_length=255, null=True)
