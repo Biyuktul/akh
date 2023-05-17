@@ -3,7 +3,27 @@ from django.utils import timezone
 from datetime import date
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import User
+from django.core.files.storage import Storage
+from django.core.files.storage import FileSystemStorage
+
 import uuid
+
+
+class CustomStorage(FileSystemStorage):
+    def __init__(self, location=None, base_url=None):
+        super().__init__(location, base_url)
+
+    def _save(self, name, content):
+        return super()._save(name, content)
+
+    def _open(self, name, mode='rb'):
+        return super()._open(name, mode)
+
+    def get_available_name(self, name, max_length=None):
+        return super().get_available_name(name, max_length)
+
+    def exists(self, name):
+        return super().exists(name)
 
 
 class officer(models.Model):
@@ -49,10 +69,14 @@ class Department(models.Model):
 class Cases(models.Model):
     case_id = models.CharField(
         max_length=255, primary_key=True, default=uuid.uuid4, editable=False)
-    case_type = models.CharField(max_length=255)
-    case_description = models.TextField()
-    case_created_date = models.DateField()
-    date_updated = models.DateField()
+    case_type = models.CharField(max_length=255, null=True)
+    case_priority = models.CharField(max_length=255, null=True)
+    case_status = models.CharField(max_length=255, null=True)
+    case_description = models.TextField(max_length=255, null=True)
+    case_created_date = models.DateField(null=True)
+    date_updated = models.DateField(null=True)
+    incident_date = models.DateField(null=True)
+    case_note = models.CharField(max_length=255, null=True)
     team_id = models.ForeignKey('Team', on_delete=models.CASCADE, null=True)
 
     class Meta:
@@ -67,6 +91,55 @@ class Team(models.Model):
 
     class Meta:
         db_table = 'teams'
+
+
+class Witness(models.Model):
+    wit_id = models.CharField(
+        max_length=255, primary_key=True, default=uuid.uuid4, editable=False)
+    FIR_ID = models.ForeignKey('FIR', on_delete=models.CASCADE, null=True)
+    name = models.CharField(max_length=255)
+    age = models.PositiveSmallIntegerField(null=True, blank=True)
+    gender = models.CharField(max_length=20, null=True)
+    address = models.TextField()
+    phone = models.CharField(max_length=20)
+
+    class Meta:
+        db_table = 'witness'
+
+
+class Victims(models.Model):
+    vict_id = models.CharField(
+        max_length=255, primary_key=True, default=uuid.uuid4, editable=False)
+    FIR_ID = models.ForeignKey('FIR', on_delete=models.CASCADE, null=True)
+    name = models.CharField(max_length=100)
+    age = models.PositiveSmallIntegerField(null=True, blank=True)
+    gender = models.CharField(max_length=20, null=True)
+    address = models.TextField()
+    injuries = models.TextField(null=True)
+    medical_information = models.TextField(null=True)
+    phone = models.CharField(max_length=20)
+    victim_description = models.TextField(),
+
+    class Meta:
+        db_table = 'victims'
+
+
+class Suspect(models.Model):
+    suspect_id = models.CharField(
+        max_length=255, primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=100)
+    age = models.PositiveSmallIntegerField(null=True, blank=True)
+    gender = models.CharField(max_length=20)
+    address = models.TextField()
+    phone = models.CharField(max_length=20)
+    suspect_relationship = models.CharField(max_length=255, null=True)
+    suspect_description = models.TextField(null=True)
+
+    verdict_id = models.ForeignKey(
+        'Verdict', on_delete=models.CASCADE, null=True, blank=True)
+
+    class Meta:
+        db_table = 'suspect'
 
 
 class Complaints(models.Model):
@@ -122,54 +195,25 @@ class Evidences(models.Model):
     evidence_id = models.CharField(
         max_length=255, primary_key=True, default=uuid.uuid4, editable=False)
     case_id = models.ForeignKey(Cases, on_delete=models.CASCADE, null=True)
-    description = models.TextField()
     date_added = models.DateField()
     evidence_type = models.CharField(max_length=255)
-    evidence_data = models.FileField(upload_to='evidences/')
+    evidence_data = models.FileField(
+        upload_to='evidences/', storage=CustomStorage())
 
     class Meta:
         db_table = 'evidences'
 
 
-class Witness(models.Model):
-    wit_id = models.CharField(
-        max_length=255, primary_key=True, default=uuid.uuid4, editable=False)
-    FIR_ID = models.ForeignKey('FIR', on_delete=models.CASCADE, null=True)
-    name = models.CharField(max_length=255)
-    age = models.PositiveSmallIntegerField(null=True, blank=True)
-    gender = models.CharField(max_length=20, null=True)
-    address = models.TextField()
-    phone = models.CharField(max_length=20)
-
-    class Meta:
-        db_table = 'witness'
-
-
-class Victims(models.Model):
-    vict_id = models.CharField(
-        max_length=255, primary_key=True, default=uuid.uuid4, editable=False)
-    FIR_ID = models.ForeignKey('FIR', on_delete=models.CASCADE, null=True)
-    name = models.CharField(max_length=100)
-    age = models.PositiveSmallIntegerField(null=True, blank=True)
-    gender = models.CharField(max_length=20, null=True)
-    address = models.TextField()
-    injuries = models.TextField(null=True)
-    medical_information = models.TextField(null=True)
-    phone = models.CharField(max_length=20)
-    victim_description = models.TextField(),
-
-    class Meta:
-        db_table = 'victims'
-
-
 class FIR(models.Model):
     FIR_ID = models.CharField(
         max_length=255, primary_key=True, default=uuid.uuid4, editable=False)
-    case_id = models.ForeignKey(Cases, on_delete=models.CASCADE, null=True)
-    date = models.DateField()
-    time = models.TimeField()
-    description = models.TextField()
-    id = models.ForeignKey(officer, on_delete=models.CASCADE, null=True)
+    summary_of_interview = models.TextField(null=True)
+    additional_contacts = models.TextField(null=True)
+    incident_location_detail = models.TextField(null=True)
+    officer_remark = models.TextField(null=True)
+    evidence = models.ForeignKey(
+        Evidences, on_delete=models.CASCADE, null=True)
+    officer = models.ForeignKey(officer, on_delete=models.CASCADE, null=True)
 
     class Meta:
         db_table = 'FIR'
@@ -186,24 +230,6 @@ class Post(models.Model):
 
     class Meta:
         db_table = 'post'
-
-
-class Suspect(models.Model):
-    suspect_id = models.CharField(
-        max_length=255, primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField(max_length=100)
-    age = models.PositiveSmallIntegerField(null=True, blank=True)
-    gender = models.CharField(max_length=20)
-    address = models.TextField()
-    phone = models.CharField(max_length=20)
-    suspect_relationship = models.CharField(max_length=255, null=True)
-    suspect_description = models.TextField(null=True)
-
-    verdict_id = models.ForeignKey(
-        'Verdict', on_delete=models.CASCADE, null=True, blank=True)
-
-    class Meta:
-        db_table = 'suspect'
 
 
 class Crime(models.Model):

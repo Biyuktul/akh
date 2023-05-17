@@ -8,8 +8,8 @@ from django.db.models import Count
 from django.contrib.auth import authenticate, login
 from rest_framework_jwt.utils import jwt_encode_handler, jwt_payload_handler
 from django.contrib.auth.hashers import check_password
-from .serializers import OfficerSerializer, PrivilegeSerializer
-from .models import officer, Privileges
+from .serializers import OfficerSerializer, PrivilegeSerializer, EvidenceSerializer, VictimSerializer, SuspectSerializer, CaseSerializer, WitnessSerializer
+from .models import officer, Privileges, Evidences, Victims, Suspect, Cases, Witness
 from rest_framework_simplejwt.tokens import AccessToken
 
 
@@ -102,4 +102,92 @@ def update_officer_privileges(request):
 def get_privilages(request, id):
     privileges = Privileges.objects.filter(officer_id=id)
     serializer = PrivilegeSerializer(privileges, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['POST'])
+def add_evidence(request):
+    serializer = EvidenceSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        json_data = JSONRenderer().render(serializer.data)
+        return HttpResponse(json_data, content_type='application/json')
+    else:
+        json_data = JSONRenderer().render(serializer.errors)
+        return HttpResponse(json_data, content_type='application/json', status=400)
+
+
+@api_view(['POST'])
+def add_victim(request):
+    serializer = VictimSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        json_data = JSONRenderer().render(serializer.data)
+        return HttpResponse(json_data, content_type='application/json')
+    else:
+        json_data = JSONRenderer().render(serializer.errors)
+        return HttpResponse(json_data, content_type='application/json', status=400)
+
+
+@api_view(['GET'])
+def get_victims(request):
+    victims = Victims.objects.all()
+    serializer = VictimSerializer(victims, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['POST'])
+def add_suspect(request):
+    serializer = SuspectSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        json_data = JSONRenderer().render(serializer.data)
+        return HttpResponse(json_data, content_type='application/json')
+    else:
+        json_data = JSONRenderer().render(serializer.errors)
+        return HttpResponse(json_data, content_type='application/json', status=400)
+
+
+@api_view(['GET'])
+def get_suspects(request):
+    suspect = Suspect.objects.all()
+    serializer = SuspectSerializer(suspect, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['POST'])
+def add_case(request):
+    serializer = CaseSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        json_data = JSONRenderer().render(serializer.data)
+        return HttpResponse(json_data, content_type='application/json')
+    else:
+        json_data = JSONRenderer().render(serializer.errors)
+        return HttpResponse(json_data, content_type='application/json', status=400)
+
+
+@api_view(['GET'])
+def get_cases(request):
+    case = Cases.objects.all()
+    serializer = CaseSerializer(case, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['POST'])
+def add_witness(request):
+    serializer = WitnessSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        json_data = JSONRenderer().render(serializer.data)
+        return HttpResponse(json_data, content_type='application/json')
+    else:
+        json_data = JSONRenderer().render(serializer.errors)
+        return HttpResponse(json_data, content_type='application/json', status=400)
+
+
+@api_view(['GET'])
+def get_witness(request):
+    witness = Witness.objects.all()
+    serializer = WitnessSerializer(witness, many=True)
     return Response(serializer.data)

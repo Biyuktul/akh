@@ -16,6 +16,7 @@ djangorestframework-jwt = "*"
 pip = "*"
 install = "*"
 djangorestframework-simplejwt = "*"
+django-storages = "*"
 
 [dev-packages]
 
