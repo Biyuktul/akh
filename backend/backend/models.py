@@ -69,16 +69,14 @@ class Department(models.Model):
 class Cases(models.Model):
     case_id = models.CharField(
         max_length=255, primary_key=True, default=uuid.uuid4, editable=False)
-    case_type = models.CharField(max_length=255, null=True)
-    case_priority = models.CharField(max_length=255, null=True)
-    case_status = models.CharField(max_length=255, default="New", null=True)
-    case_description = models.TextField(max_length=255, null=True)
-    case_created_date = models.DateField(
+    caseType = models.CharField(max_length=255, null=True)
+    casePriority = models.CharField(max_length=255, null=True)
+    caseStatus = models.CharField(max_length=255, default="Open", null=True)
+    caseDescription = models.TextField(max_length=255, null=True)
+    caseDate = models.DateField(
         null=True, default=date.today().strftime("%Y-%m-%d"))
-    date_updated = models.DateField(null=True)
-    incident_date = models.DateField(null=True)
-    case_note = models.CharField(max_length=255, null=True)
-    team_id = models.ForeignKey('Team', on_delete=models.CASCADE, null=True)
+    incidentDateTime = models.DateField(null=True)
+    caseNote = models.CharField(max_length=255, null=True)
 
     class Meta:
         db_table = 'cases'
@@ -88,7 +86,7 @@ class Team(models.Model):
     team_id = models.CharField(
         max_length=255, primary_key=True, default=uuid.uuid4, editable=False)
     case = models.ForeignKey(Cases, on_delete=models.CASCADE, null=True)
-    date_created = models.DateField()
+    date_created = models.DateField(default=date.today().strftime("%Y-%m-%d"))
 
     class Meta:
         db_table = 'teams'
@@ -98,11 +96,12 @@ class Witness(models.Model):
     wit_id = models.CharField(
         max_length=255, primary_key=True, default=uuid.uuid4, editable=False)
     FIR_ID = models.ForeignKey('FIR', on_delete=models.CASCADE, null=True)
-    name = models.CharField(max_length=255)
-    age = models.PositiveSmallIntegerField(null=True, blank=True)
-    gender = models.CharField(max_length=20, null=True)
-    address = models.TextField()
-    phone = models.CharField(max_length=20)
+    case = models.ForeignKey(Cases, on_delete=models.CASCADE, null=True)
+    witnessFullName = models.CharField(max_length=255)
+    witnessAge = models.PositiveSmallIntegerField(null=True, blank=True)
+    witnessGender = models.CharField(max_length=20, null=True)
+    witnessAddress = models.TextField()
+    witnessPhone = models.CharField(max_length=20)
 
     class Meta:
         db_table = 'witness'
@@ -112,14 +111,15 @@ class Victims(models.Model):
     vict_id = models.CharField(
         max_length=255, primary_key=True, default=uuid.uuid4, editable=False)
     FIR_ID = models.ForeignKey('FIR', on_delete=models.CASCADE, null=True)
-    name = models.CharField(max_length=100)
-    age = models.PositiveSmallIntegerField(null=True, blank=True)
-    gender = models.CharField(max_length=20, null=True)
-    address = models.TextField()
-    injuries = models.TextField(null=True)
-    medical_information = models.TextField(null=True)
-    phone = models.CharField(max_length=20)
-    victim_description = models.TextField(),
+    case = models.ForeignKey(Cases, on_delete=models.CASCADE, null=True)
+    victim_name = models.CharField(max_length=100)
+    victim_age = models.PositiveSmallIntegerField(null=True, blank=True)
+    victim_gender = models.CharField(max_length=20, null=True)
+    victim_address = models.TextField()
+    victim_injuries = models.TextField(null=True)
+    victim_medicalInfo = models.TextField(null=True)
+    victim_phone = models.CharField(max_length=20)
+    victim_notes = models.TextField(),
 
     class Meta:
         db_table = 'victims'
@@ -128,14 +128,14 @@ class Victims(models.Model):
 class Suspect(models.Model):
     suspect_id = models.CharField(
         max_length=255, primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField(max_length=100)
-    age = models.PositiveSmallIntegerField(null=True, blank=True)
-    gender = models.CharField(max_length=20)
-    address = models.TextField()
-    phone = models.CharField(max_length=20)
-    suspect_relationship = models.CharField(max_length=255, null=True)
-    suspect_description = models.TextField(null=True)
-
+    suspectFullName = models.CharField(max_length=100)
+    suspectAge = models.PositiveSmallIntegerField(null=True, blank=True)
+    case = models.ForeignKey(Cases, on_delete=models.CASCADE, null=True)
+    suspectGender = models.CharField(max_length=20)
+    suspectAddress = models.TextField()
+    suspectPhone = models.CharField(max_length=20)
+    suspectRelationship = models.CharField(max_length=255, null=True)
+    suspectNotes = models.TextField(null=True)
     verdict_id = models.ForeignKey(
         'Verdict', on_delete=models.CASCADE, null=True, blank=True)
 
