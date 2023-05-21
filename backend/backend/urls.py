@@ -15,14 +15,13 @@ urlpatterns = [
          name='update_officer_privileges'),
     path('privileges/<str:id>/', views.get_privilages, name="get_privilages"),
     path('evidence/create/', views.add_evidence, name="add_evidence"),
-    #     path('victim/create/', views.add_victim, name="add_victim"),
-    #     path('victims/', views.get_victims, name="get_victims"),
-    #     path('suspect/create/', views.add_suspect, name="add_suspect"),
-    #     path('suspects/', views.get_suspects, name="get_suspects"),
-    #     path('case/create/', views.add_case, name="add_case"),
-    #     path('cases/', views.get_cases, name="get_cases"),
-    #     path('witness/create/', views.get_witness, name='get_witness'),
-    #     path('witness/', views.add_witness, name='add_witness'),
+    path('evidence/<str:case_id>/', views.get_evidence_by_case,
+         name="get_evidence_by_case"),
     path('case/create/', views.add_case, name="add_case"),
-    path('case/', views.get_cases, name="get_cases")
+    path('case/<str:case_id>/', views.get_case, name="get_case"),
+    path('case/', views.get_all_cases, name="get_all_cases"),
+    path('case/update/<str:case_id>/', views.update_case, name="update_case"),
+    path('fir/create/', views.add_fir, name="add_fir"),
+    path('complaint/create/', views.add_complaint, name="add_complaint"),
+    path('civilian/create/', views.add_civilian, name="add_civilian")
 ]

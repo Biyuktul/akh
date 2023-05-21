@@ -8,8 +8,8 @@ from django.db.models import Count
 from django.contrib.auth import authenticate, login
 from rest_framework_jwt.utils import jwt_encode_handler, jwt_payload_handler
 from django.contrib.auth.hashers import check_password
-from .serializers import OfficerSerializer, PrivilegeSerializer, EvidenceSerializer, TeamSerializer, VictimSerializer, SuspectSerializer, CaseSerializer, WitnessSerializer
-from .models import officer, Privileges, Evidences, Victims, Suspect, Cases, Witness, Team
+from .serializers import OfficerSerializer, PrivilegeSerializer, EvidenceSerializer, FIRSerializer, CivilianSerializer, ComplaintsSerializer, TeamSerializer, VictimSerializer, SuspectSerializer, CaseSerializer, WitnessSerializer
+from .models import officer, Privileges, Evidences, Victims, Suspect, Cases, Witness, Team, Complaints
 from rest_framework_simplejwt.tokens import AccessToken
 
 
@@ -117,6 +117,16 @@ def add_evidence(request):
         return HttpResponse(json_data, content_type='application/json', status=400)
 
 
+@api_view(['GET'])
+def get_evidence_by_case(request, case_id):
+    try:
+        evidence = Evidences.objects.filter(case_id=case_id)
+        serializer = EvidenceSerializer(evidence, many=True)
+        return Response(serializer.data)
+    except Evidences.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+
 @api_view(['POST'])
 def add_case(request):
     case_serializer = CaseSerializer(data=request.data.get('case_info'))
@@ -135,7 +145,7 @@ def add_case(request):
         team = Team.objects.create(case=case)
         response_data['team'] = TeamSerializer(team).data
 
-        officer_ids = request.data.get('case_info', {}).get('officer_ids', [])
+        officer_ids = request.data.get('case_info', {}).get('assignTeam', [])
 
         for officer_id in officer_ids:
             assigned_officer = officer.objects.get(id=officer_id)
@@ -166,25 +176,150 @@ def add_case(request):
     return HttpResponse(json_data, content_type='application/json')
 
 
+@api_view(['PUT'])
+def update_case(request, case_id):
+    try:
+        case = Cases.objects.get(case_id=case_id)
+        serializer = CaseSerializer(case, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    except Cases.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+
 @api_view(['GET'])
-def get_cases(request):
-    witness = Witness.objects.all()
-    witness_serializer = WitnessSerializer(witness, many=True)
+def get_case(request, case_id):
+    try:
+        case = Cases.objects.get(case_id=case_id)
+        case_data = CaseSerializer(case).data
 
-    case = Cases.objects.all()
-    case_serializer = CaseSerializer(case, many=True)
+        response_data = {
+            'case': case_data,
+        }
 
-    suspect = Suspect.objects.all()
-    suspect_serializer = SuspectSerializer(suspect, many=True)
+        json_data = JSONRenderer().render(response_data)
+        return HttpResponse(json_data, content_type='application/json')
 
-    victims = Victims.objects.all()
-    victim_serializer = VictimSerializer(victims, many=True)
+    except Cases.DoesNotExist:
+        return HttpResponse(status=404)
 
-    response_data = {
-        'witness': witness_serializer.data,
-        'case': case_serializer.data,
-        'suspect': suspect_serializer.data,
-        'victim': victim_serializer.data
-    }
 
-    return Response(response_data)
+@api_view(['GET'])
+def get_all_cases(request):
+    cases = Cases.objects.all()
+    response_data = []
+
+    for case in cases:
+        case_data = CaseSerializer(case).data
+
+        try:
+            team = Team.objects.get(case=case)
+            team_data = TeamSerializer(team).data
+        except Team.DoesNotExist:
+            team_data = None
+
+        assigned_officers = officer.objects.filter(team_id=team.team_id)
+        officers_data = OfficerSerializer(assigned_officers, many=True).data
+
+        try:
+            victim = Victims.objects.get(case=case)
+            victim_data = VictimSerializer(victim).data
+        except Victims.DoesNotExist:
+            victim_data = None
+
+        try:
+            suspect = Suspect.objects.get(case=case)
+            suspect_data = SuspectSerializer(suspect).data
+        except Suspect.DoesNotExist:
+            suspect_data = None
+
+        try:
+            witness = Witness.objects.get(case=case)
+            witness_data = WitnessSerializer(witness).data
+        except Witness.DoesNotExist:
+            witness_data = None
+        try:
+            evidence_objects = Evidences.objects.filter(case_id=case.case_id)
+            evidence_data = EvidenceSerializer(
+                evidence_objects, many=True).data
+        except Evidences.DoesNotExist:
+            evidence_data = None
+
+        case_info = {
+            'case': case_data,
+            'team': team_data,
+            'officers': officers_data,
+            'victim': victim_data,
+            'suspect': suspect_data,
+            'witness': witness_data,
+            'evidence': evidence_data
+        }
+
+        response_data.append(case_info)
+
+    json_data = JSONRenderer().render(response_data)
+    return HttpResponse(json_data, content_type='application/json')
+
+
+@api_view(['POST'])
+def add_fir(request):
+    serializer = FIRSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        json_data = JSONRenderer().render(serializer.data)
+        return HttpResponse(json_data, content_type='application/json')
+    else:
+        json_data = JSONRenderer().render(serializer.errors)
+        return HttpResponse(json_data, content_type='application/json', status=400)
+
+
+# @api_view(['POST'])
+# def add_complaint(request):
+#     serializer = ComplaintsSerializer(data=request.data)
+#     if serializer.is_valid():
+#         serializer.save()
+#         json_data = JSONRenderer().render(serializer.data)
+#         return HttpResponse(json_data, content_type='application/json')
+#     else:
+#         json_data = JSONRenderer().render(serializer.errors)
+#         return HttpResponse(json_data, content_type='application/json', status=400)
+
+
+@api_view(['POST'])
+def add_civilian(request):
+    serializer = CivilianSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        json_data = JSONRenderer().render(serializer.data)
+        return HttpResponse(json_data, content_type='application/json')
+    else:
+        json_data = JSONRenderer().render(serializer.errors)
+        return HttpResponse(json_data, content_type='application/json', status=400)
+
+
+@api_view(['POST'])
+def add_complaint(request):
+    civilian_serializer = CivilianSerializer(data=request.data.get('civilian'))
+    complaint_serializer = ComplaintsSerializer(
+        data=request.data.get('complaint'))
+
+    if civilian_serializer.is_valid() and complaint_serializer.is_valid():
+        civilian_instance = civilian_serializer.save()
+        complaint_data = complaint_serializer.validated_data
+        complaint_data['civilian'] = civilian_instance
+        complaint_instance = Complaints.objects.create(**complaint_data)
+        complaint_serializer = ComplaintsSerializer(complaint_instance)
+
+        json_data = JSONRenderer().render(complaint_serializer.data)
+        return HttpResponse(json_data, content_type='application/json')
+    else:
+        error_data = {}
+        if not civilian_serializer.is_valid():
+            error_data['civilian'] = civilian_serializer.errors
+        if not complaint_serializer.is_valid():
+            error_data['complaint'] = complaint_serializer.errors
+
+        json_data = JSONRenderer().render(error_data)
+        return HttpResponse(json_data, content_type='application/json', status=400)

@@ -75,7 +75,6 @@ class Cases(models.Model):
     caseDescription = models.TextField(max_length=255, null=True)
     caseDate = models.DateField(
         null=True, default=date.today().strftime("%Y-%m-%d"))
-    incidentDateTime = models.DateField(null=True)
     caseNote = models.CharField(max_length=255, null=True)
 
     class Meta:
@@ -95,7 +94,6 @@ class Team(models.Model):
 class Witness(models.Model):
     wit_id = models.CharField(
         max_length=255, primary_key=True, default=uuid.uuid4, editable=False)
-    FIR_ID = models.ForeignKey('FIR', on_delete=models.CASCADE, null=True)
     case = models.ForeignKey(Cases, on_delete=models.CASCADE, null=True)
     witnessFullName = models.CharField(max_length=255)
     witnessAge = models.PositiveSmallIntegerField(null=True, blank=True)
@@ -110,7 +108,6 @@ class Witness(models.Model):
 class Victims(models.Model):
     vict_id = models.CharField(
         max_length=255, primary_key=True, default=uuid.uuid4, editable=False)
-    FIR_ID = models.ForeignKey('FIR', on_delete=models.CASCADE, null=True)
     case = models.ForeignKey(Cases, on_delete=models.CASCADE, null=True)
     victim_name = models.CharField(max_length=100)
     victim_age = models.PositiveSmallIntegerField(null=True, blank=True)
@@ -144,14 +141,16 @@ class Suspect(models.Model):
 
 
 class Complaints(models.Model):
-    comp_id = models.CharField(
+    complaint_id = models.CharField(
         max_length=255, primary_key=True, default=uuid.uuid4, editable=False)
-    civilian_id = models.ForeignKey(
+    civilian = models.ForeignKey(
         'Civilian', on_delete=models.CASCADE, null=True)
-    date = models.DateField()
-    description = models.TextField()
-    location = models.CharField(max_length=255)
-    status = models.CharField(max_length=255)
+    complaint_type = models.CharField(max_length=255, null=True)
+    complaint_date = models.DateField(
+        default=date.today().strftime("%Y-%m-%d"))
+    complaint_body = models.TextField()
+    complaint_location = models.CharField(max_length=255)
+    complaint_status = models.CharField(max_length=255, default="pending")
 
     class Meta:
         db_table = 'complaints'
@@ -174,6 +173,7 @@ class Civilian(models.Model):
     civilian_id = models.CharField(
         max_length=255, primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255)
+    age = models.PositiveSmallIntegerField(null=True, blank=True)
     phone = models.CharField(max_length=20)
     address = models.CharField(max_length=255)
 
@@ -196,8 +196,8 @@ class Evidences(models.Model):
     evidence_id = models.CharField(
         max_length=255, primary_key=True, default=uuid.uuid4, editable=False)
     case_id = models.ForeignKey(Cases, on_delete=models.CASCADE, null=True)
-    date_added = models.DateField()
-    evidence_type = models.CharField(max_length=255)
+    date_added = models.DateField(default=date.today().strftime("%Y-%m-%d"))
+    evidence_type = models.CharField(max_length=255, default="Image")
     evidence_data = models.FileField(
         upload_to='evidences/', storage=CustomStorage())
 
@@ -215,6 +215,7 @@ class FIR(models.Model):
     evidence = models.ForeignKey(
         Evidences, on_delete=models.CASCADE, null=True)
     officer = models.ForeignKey(officer, on_delete=models.CASCADE, null=True)
+    civilian = models.ForeignKey(Civilian, on_delete=models.CASCADE, null=True)
 
     class Meta:
         db_table = 'FIR'
