@@ -267,8 +267,19 @@ class Verdict(models.Model):
         max_length=255, primary_key=True, default=uuid.uuid4, editable=False)
     case_id = models.ForeignKey(Cases, on_delete=models.CASCADE, null=True)
     verdict_type = models.CharField(max_length=50)
-    verdict_date = models.DateTimeField(default=timezone.now)
+    verdict_date = models.DateField(
+        default=date.today().strftime("%Y-%m-%d"))
     verdict_description = models.TextField()
 
     class Meta:
         db_table = 'verdict'
+
+
+class Report(models.Model):
+    report_id = models.CharField(
+        max_length=255, primary_key=True, default=uuid.uuid4, editable=False)
+    officer = models.ForeignKey(officer, on_delete=models.CASCADE, null=True)
+    report_type = models.CharField(max_length=60)
+    report_date = models.DateField(
+        default=date.today().strftime("%Y-%m-%d"))
+    report_body = models.TextField()

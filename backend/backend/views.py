@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
@@ -8,8 +9,8 @@ from django.db.models import Count
 from django.contrib.auth import authenticate, login
 from rest_framework_jwt.utils import jwt_encode_handler, jwt_payload_handler
 from django.contrib.auth.hashers import check_password
-from .serializers import OfficerSerializer, PrivilegeSerializer, EvidenceSerializer, FIRSerializer, CivilianSerializer, ComplaintsSerializer, TeamSerializer, VictimSerializer, SuspectSerializer, CaseSerializer, WitnessSerializer
-from .models import officer, Privileges, Evidences, Victims, Suspect, Cases, Witness, Team, Complaints
+from .serializers import OfficerSerializer, PrivilegeSerializer, ReportSerializer, EvidenceSerializer, FIRSerializer, CivilianSerializer, ComplaintsSerializer, TeamSerializer, VictimSerializer, SuspectSerializer, CaseSerializer, WitnessSerializer
+from .models import officer, Privileges, Evidences, Victims, Suspect, Cases, Witness, Team, Complaints, Report
 from rest_framework_simplejwt.tokens import AccessToken
 
 
@@ -72,6 +73,45 @@ def officers_per_month(request):
         'created_at')).values('month').annotate(count=Count('id'))
     data = [{'name': month['month'].strftime(
         '%b'), 'value': month['count']} for month in officers]
+    return Response(data)
+
+
+@api_view(['GET'])
+def case_per_month(request):
+    cases = Cases.objects.annotate(month=TruncMonth(
+        'caseDate')).values('month').annotate(count=Count('case_id'))
+    data = [{'name': month['month'].strftime(
+        '%b'), 'value': month['count']} for month in cases]
+    return Response(data)
+
+
+@api_view(['GET'])
+def open_case_per_month(request):
+    open_cases = Cases.objects.filter(caseStatus='Open')  # Filter open cases
+    cases = open_cases.annotate(month=TruncMonth('caseDate')).values(
+        'month').annotate(count=Count('case_id'))
+    data = [{'name': month['month'].strftime(
+        '%b'), 'value': month['count']} for month in cases]
+    return Response(data)
+
+
+@api_view(['GET'])
+def closed_case_per_month(request):
+    closed_cases = Cases.objects.filter(
+        caseStatus='Closed')  # Filter open cases
+    cases = closed_cases.annotate(month=TruncMonth('caseDate')).values(
+        'month').annotate(count=Count('case_id'))
+    data = [{'name': month['month'].strftime(
+        '%b'), 'value': month['count']} for month in cases]
+    return Response(data)
+
+
+@api_view(['GET'])
+def complaint_per_month(request):
+    complaints = Complaints.objects.annotate(month=TruncMonth(
+        'complaint_date')).values('month').annotate(count=Count('complaint_id'))
+    data = [{'name': month['month'].strftime(
+        '%b'), 'value': month['count']} for month in complaints]
     return Response(data)
 
 
@@ -275,18 +315,6 @@ def add_fir(request):
         return HttpResponse(json_data, content_type='application/json', status=400)
 
 
-# @api_view(['POST'])
-# def add_complaint(request):
-#     serializer = ComplaintsSerializer(data=request.data)
-#     if serializer.is_valid():
-#         serializer.save()
-#         json_data = JSONRenderer().render(serializer.data)
-#         return HttpResponse(json_data, content_type='application/json')
-#     else:
-#         json_data = JSONRenderer().render(serializer.errors)
-#         return HttpResponse(json_data, content_type='application/json', status=400)
-
-
 @api_view(['POST'])
 def add_civilian(request):
     serializer = CivilianSerializer(data=request.data)
@@ -323,3 +351,56 @@ def add_complaint(request):
 
         json_data = JSONRenderer().render(error_data)
         return HttpResponse(json_data, content_type='application/json', status=400)
+
+
+@api_view(['POST'])
+def create_report(request):
+    serializer = ReportSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        json_data = JSONRenderer().render(serializer.data)
+        return HttpResponse(json_data, content_type='application/json')
+    else:
+        json_data = JSONRenderer().render(serializer.errors)
+        return HttpResponse(json_data, content_type='application/json', status=400)
+
+
+@api_view(['GET'])
+def get_all_reports(request):
+    reports = Report.objects.all()
+    serializer = ReportSerializer(reports, many=True)
+    serialized_data = serializer.data
+
+    for report_data in serialized_data:
+        officer_id = report_data['officer']
+        officer_full_name = officer.objects.get(id=officer_id).full_name
+        report_data['officer_full_name'] = officer_full_name
+
+    return Response(serialized_data)
+
+
+@api_view(['PUT'])
+def update_report(request, report_id):
+    try:
+        report = Report.objects.get(report_id=report_id)
+    except Report.DoesNotExist:
+        return HttpResponse(status=404)
+
+    serializer = ReportSerializer(report, data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        json_data = JSONRenderer().render(serializer.data)
+        return HttpResponse(json_data, content_type='application/json')
+    else:
+        json_data = JSONRenderer().render(serializer.errors)
+        return HttpResponse(json_data, content_type='application/json', status=400)
+
+
+@api_view(['DELETE'])
+def delete_report(request, report_id):
+    try:
+        report = Report.objects.get(report_id=report_id)
+        report.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    except Report.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)

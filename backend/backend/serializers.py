@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import officer, Privileges, Evidences, Victims, Suspect, Cases, Witness, Team, FIR, Complaints, Civilian
+from .models import officer, Privileges, Evidences, Victims, Suspect, Cases, Witness, Team, FIR, Complaints, Civilian, Report
 
 
 class OfficerSerializer(serializers.ModelSerializer):
@@ -65,4 +65,10 @@ class ComplaintsSerializer(serializers.ModelSerializer):
 class CivilianSerializer(serializers.ModelSerializer):
     class Meta:
         model = Civilian
+        fields = '__all__'
+
+
+class ReportSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Report
         fields = '__all__'
