@@ -30,11 +30,18 @@ urlpatterns = [
     path('case/update/<str:case_id>/', views.update_case, name="update_case"),
     path('fir/create/', views.add_fir, name="add_fir"),
     path('complaint/create/', views.add_complaint, name="add_complaint"),
+    path('complaint/<str:complaint_id>', views.update_complaint_status,
+         name="update_complaint_status"),
+    path('complaint/', views.get_complaints, name="get_complaints"),
     path('civilian/create/', views.add_civilian, name="add_civilian"),
     path('reports/create/', views.create_report, name='create_report'),
     path('reports/', views.get_all_reports, name='get_all_reports'),
     path('report/update/<str:report_id>/',
          views.update_report, name='update_report'),
     path('report/delete/<str:report_id>/',
-         views.delete_report, name="delete_report")
+         views.delete_report, name="delete_report"),
+    path('post/create/', views.create_post, name='create_post'),
+    path('post/', views.get_all_posts, name='get_all_posts'),
+    path('post/update/<str:post_id>/', views.update_post, name='update_post'),
+    path('post/delete/<str:post_id>/', views.delete_post, name="delete_post")
 ]

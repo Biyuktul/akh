@@ -140,22 +140,6 @@ class Suspect(models.Model):
         db_table = 'suspect'
 
 
-class Complaints(models.Model):
-    complaint_id = models.CharField(
-        max_length=255, primary_key=True, default=uuid.uuid4, editable=False)
-    civilian = models.ForeignKey(
-        'Civilian', on_delete=models.CASCADE, null=True)
-    complaint_type = models.CharField(max_length=255, null=True)
-    complaint_date = models.DateField(
-        default=date.today().strftime("%Y-%m-%d"))
-    complaint_body = models.TextField()
-    complaint_location = models.CharField(max_length=255)
-    complaint_status = models.CharField(max_length=255, default="pending")
-
-    class Meta:
-        db_table = 'complaints'
-
-
 class Criminals(models.Model):
     criminal_id = models.CharField(
         max_length=255, primary_key=True, default=uuid.uuid4, editable=False)
@@ -167,18 +151,6 @@ class Criminals(models.Model):
 
     class Meta:
         db_table = 'criminals'
-
-
-class Civilian(models.Model):
-    civilian_id = models.CharField(
-        max_length=255, primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField(max_length=255)
-    age = models.PositiveSmallIntegerField(null=True, blank=True)
-    phone = models.CharField(max_length=20)
-    address = models.CharField(max_length=255)
-
-    class Meta:
-        db_table = 'civilians'
 
 
 class ActivityLog(models.Model):
@@ -205,11 +177,39 @@ class Evidences(models.Model):
         db_table = 'evidences'
 
 
+class Civilian(models.Model):
+    civilian_id = models.CharField(
+        max_length=255, primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=255)
+    age = models.PositiveSmallIntegerField(null=True, blank=True)
+    phone = models.CharField(max_length=20)
+    address = models.CharField(max_length=255)
+
+    class Meta:
+        db_table = 'civilians'
+
+
+class Complaints(models.Model):
+    complaint_id = models.CharField(
+        max_length=255, primary_key=True, default=uuid.uuid4, editable=False)
+    civilian = models.ForeignKey(
+        'Civilian', on_delete=models.CASCADE, null=True)
+    complaint_type = models.CharField(max_length=255, null=True)
+    complaint_date = models.DateField(
+        default=date.today().strftime("%Y-%m-%d"))
+    complaint_body = models.TextField()
+    complaint_location = models.CharField(max_length=255)
+    complaint_status = models.CharField(max_length=255, default="pending")
+
+    class Meta:
+        db_table = 'complaints'
+
+
 class FIR(models.Model):
     FIR_ID = models.CharField(
         max_length=255, primary_key=True, default=uuid.uuid4, editable=False)
     summary_of_interview = models.TextField(null=True)
-    additional_contacts = models.TextField(null=True)
+    additional_contacts_witnesses = models.TextField(null=True)
     incident_location_detail = models.TextField(null=True)
     officer_remark = models.TextField(null=True)
     evidence = models.ForeignKey(
@@ -224,11 +224,15 @@ class FIR(models.Model):
 class Post(models.Model):
     post_id = models.CharField(
         max_length=255, primary_key=True, default=uuid.uuid4, editable=False)
-    id = models.ForeignKey(officer, on_delete=models.CASCADE, null=True)
-    post_type = models.CharField(max_length=50)
-    post_date = models.DateTimeField(default=timezone.now)
-    post_description = models.TextField()
-    post_update_date = models.DateTimeField(default=timezone.now)
+    officer = models.ForeignKey(officer, on_delete=models.CASCADE, null=True)
+    post_date = models.DateField(
+        default=date.today().strftime("%Y-%m-%d"), null=True)
+    person_name = models.CharField(max_length=100, null=True)
+    person_age = models.PositiveSmallIntegerField(null=True, blank=True)
+    person_sex = models.CharField(max_length=100, null=True)
+    person_physical_description = models.TextField(null=True)
+    person_distinguishing_features = models.TextField(null=True)
+    contact_information = models.CharField(max_length=250, null=True)
 
     class Meta:
         db_table = 'post'

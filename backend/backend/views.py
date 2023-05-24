@@ -9,8 +9,8 @@ from django.db.models import Count
 from django.contrib.auth import authenticate, login
 from rest_framework_jwt.utils import jwt_encode_handler, jwt_payload_handler
 from django.contrib.auth.hashers import check_password
-from .serializers import OfficerSerializer, PrivilegeSerializer, ReportSerializer, EvidenceSerializer, FIRSerializer, CivilianSerializer, ComplaintsSerializer, TeamSerializer, VictimSerializer, SuspectSerializer, CaseSerializer, WitnessSerializer
-from .models import officer, Privileges, Evidences, Victims, Suspect, Cases, Witness, Team, Complaints, Report
+from .serializers import OfficerSerializer, PrivilegeSerializer, ReportSerializer, EvidenceSerializer, PostSerializer, FIRSerializer, CivilianSerializer, ComplaintsSerializer, TeamSerializer, VictimSerializer, SuspectSerializer, CaseSerializer, WitnessSerializer
+from .models import officer, Privileges, Evidences, Victims, Suspect, Cases, Witness, Team, Complaints, Report, FIR, Post
 from rest_framework_simplejwt.tokens import AccessToken
 
 
@@ -329,19 +329,32 @@ def add_civilian(request):
 
 @api_view(['POST'])
 def add_complaint(request):
-    civilian_serializer = CivilianSerializer(data=request.data.get('civilian'))
-    complaint_serializer = ComplaintsSerializer(
-        data=request.data.get('complaint'))
+    data = request.data
+
+    civilian_data = {
+        'name': data.get('name'),
+        'age': data.get('age'),
+        'phone': data.get('phone'),
+        'address': data.get('address')
+    }
+
+    complaint_data = {
+        'complaint_type': data.get('complaint_type'),
+        'complaint_body': data.get('complaint_body'),
+        'complaint_location': data.get('complaint_location'),
+        'complaint_status': data.get('complaint_status')
+    }
+
+    civilian_serializer = CivilianSerializer(data=civilian_data)
+    complaint_serializer = ComplaintsSerializer(data=complaint_data)
 
     if civilian_serializer.is_valid() and complaint_serializer.is_valid():
         civilian_instance = civilian_serializer.save()
-        complaint_data = complaint_serializer.validated_data
-        complaint_data['civilian'] = civilian_instance
-        complaint_instance = Complaints.objects.create(**complaint_data)
+        complaint_instance = complaint_serializer.save(
+            civilian=civilian_instance)
         complaint_serializer = ComplaintsSerializer(complaint_instance)
 
-        json_data = JSONRenderer().render(complaint_serializer.data)
-        return HttpResponse(json_data, content_type='application/json')
+        return Response("success", status=status.HTTP_201_CREATED)
     else:
         error_data = {}
         if not civilian_serializer.is_valid():
@@ -349,8 +362,59 @@ def add_complaint(request):
         if not complaint_serializer.is_valid():
             error_data['complaint'] = complaint_serializer.errors
 
-        json_data = JSONRenderer().render(error_data)
-        return HttpResponse(json_data, content_type='application/json', status=400)
+        return Response(error_data, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def get_complaints(request):
+    complaints = Complaints.objects.all()
+
+    response_data = []
+
+    for complaint in complaints:
+        complaint_data = {
+            'key': complaint.complaint_id,
+            'complaint_id': complaint.complaint_id,
+            'complaint_type': complaint.complaint_type,
+            'complaint_date': complaint.complaint_date.strftime("%Y-%m-%d"),
+            'complaint_body': complaint.complaint_body,
+            'complaint_location': complaint.complaint_location,
+            'complaint_status': complaint.complaint_status,
+            'civilian_id': complaint.civilian.civilian_id,
+            'civilian_name': complaint.civilian.name,
+            'summary_of_interview': '',
+            'incident_location_detail': '',
+            'additional_contacts_witnesses': '',
+            'officer_remarks': '',
+        }
+
+        fir = FIR.objects.filter(civilian=complaint.civilian).first()
+        if fir:
+            complaint_data['summary_of_interview'] = fir.summary_of_interview
+            complaint_data['incident_location_detail'] = fir.incident_location_detail
+            complaint_data['additional_contacts_witnesses'] = fir.additional_contacts_witnesses
+            complaint_data['officer_remarks'] = fir.officer_remark
+
+        response_data.append(complaint_data)
+
+    return Response(response_data, status=status.HTTP_200_OK)
+
+
+@api_view(['PUT'])
+def update_complaint_status(request, complaint_id):
+    # Retrieve the complaint object from the database based on the complaint_id
+    try:
+        complaint = Complaints.objects.get(complaint_id=complaint_id)
+    except Complaints.DoesNotExist:
+        return Response({'error': 'Complaint not found'}, status=404)
+
+    # Update the complaint status and feedback based on the request data
+    complaint.complaint_status = request.data.get(
+        'complaint_status', complaint.complaint_status)
+    complaint.save()
+
+    # Return a response indicating successful update
+    return Response({'message': 'Complaint status updated successfully'})
 
 
 @api_view(['POST'])
@@ -403,4 +467,60 @@ def delete_report(request, report_id):
         report.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     except Report.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['POST'])
+def create_post(request):
+    serializer = PostSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=201)
+    return Response(serializer.errors, status=400)
+
+
+@api_view(['GET'])
+def get_all_posts(request):
+    posts = Post.objects.all()
+    serializer = PostSerializer(posts, many=True)
+
+    # Modify the serializer data to include officer's full name and post_id as key
+    modified_data = []
+    for item in serializer.data:
+        officer_id = item['officer']
+        officer_full_name = officer.objects.get(id=officer_id).full_name
+        modified_item = {
+            'key': item['post_id'],
+            'name': officer_full_name,
+            **item
+        }
+        modified_data.append(modified_item)
+
+    return Response(modified_data)
+
+
+@api_view(['PUT'])
+def update_post(request, post_id):
+    try:
+        post = Post.objects.get(post_id=post_id)
+    except Post.DoesNotExist:
+        return HttpResponse(status=404)
+
+    serializer = PostSerializer(post, data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        json_data = JSONRenderer().render(serializer.data)
+        return HttpResponse(json_data, content_type='application/json')
+    else:
+        json_data = JSONRenderer().render(serializer.errors)
+        return HttpResponse(json_data, content_type='application/json', status=400)
+
+
+@api_view(['DELETE'])
+def delete_post(request, post_id):
+    try:
+        post = Post.objects.get(post_id=post_id)
+        post.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    except Post.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
