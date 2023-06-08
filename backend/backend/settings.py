@@ -15,7 +15,7 @@ SECRET_KEY = 'f@-!sb$@bz(dkr9c2rx%+h9_%w3rgyv$n4g4$a*1#e+=_-3!w3'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1']
 
 # Application definition
 
@@ -91,7 +91,7 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "sql_server.pyodbc",
-        "NAME": "police_rms_new",
+        "NAME": "police_rms_f",
         "HOST": "_YON\YONINSTANCE",
         "PORT": "",
         "OPTIONS": {"driver": "ODBC Driver 17 for SQL Server",

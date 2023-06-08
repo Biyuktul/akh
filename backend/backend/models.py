@@ -5,7 +5,6 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import User
 from django.core.files.storage import Storage
 from django.core.files.storage import FileSystemStorage
-
 import uuid
 
 
@@ -58,9 +57,8 @@ class Privileges(models.Model):
 
 
 class Department(models.Model):
-    dept_id = models.CharField(
-        max_length=255, primary_key=True, default=uuid.uuid4, editable=False)
-    dept_name = models.CharField(max_length=255)
+    dept_name = models.CharField(
+        max_length=255, primary_key=True, editable=False)
 
     class Meta:
         db_table = 'department'
@@ -197,9 +195,10 @@ class Complaints(models.Model):
     complaint_type = models.CharField(max_length=255, null=True)
     complaint_date = models.DateField(
         default=date.today().strftime("%Y-%m-%d"))
-    complaint_body = models.TextField()
-    complaint_location = models.CharField(max_length=255)
-    complaint_status = models.CharField(max_length=255, default="pending")
+    complaint_text = models.TextField(null=True)
+    incident_location = models.CharField(max_length=255)
+    complaint_status = models.CharField(
+        max_length=255, default="Pending", null=True)
 
     class Meta:
         db_table = 'complaints'

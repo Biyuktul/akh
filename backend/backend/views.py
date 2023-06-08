@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from django.shortcuts import render
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -9,8 +10,8 @@ from django.db.models import Count
 from django.contrib.auth import authenticate, login
 from rest_framework_jwt.utils import jwt_encode_handler, jwt_payload_handler
 from django.contrib.auth.hashers import check_password
-from .serializers import OfficerSerializer, PrivilegeSerializer, ReportSerializer, EvidenceSerializer, PostSerializer, FIRSerializer, CivilianSerializer, ComplaintsSerializer, TeamSerializer, VictimSerializer, SuspectSerializer, CaseSerializer, WitnessSerializer
-from .models import officer, Privileges, Evidences, Victims, Suspect, Cases, Witness, Team, Complaints, Report, FIR, Post
+from .serializers import OfficerSerializer, PrivilegeSerializer, ReportSerializer, DepartmentSerializer, EvidenceSerializer, PostSerializer, FIRSerializer, CivilianSerializer, ComplaintsSerializer, TeamSerializer, VictimSerializer, SuspectSerializer, CaseSerializer, WitnessSerializer
+from .models import officer, Privileges, Evidences, Victims, Suspect, Cases, Witness, Team, Complaints, Report, FIR, Post, Department
 from rest_framework_simplejwt.tokens import AccessToken
 
 
@@ -38,12 +39,36 @@ def login_view(request):
 def add_officer(request):
     serializer = OfficerSerializer(data=request.data)
     if serializer.is_valid():
-        serializer.save()
-        json_data = JSONRenderer().render(serializer.data)
-        return HttpResponse(json_data, content_type='application/json')
+        # Get the department name from the request data
+        department_name = request.data.get('department')
+
+        # Find the department object based on the name
+        department = get_object_or_404(Department, dept_name=department_name)
+
+        # Add the department object to the serializer data
+        serializer.validated_data['department'] = department
+
+        # Save the serializer and retrieve the created officer object
+        officer = serializer.save()
+
+        # Create a response data dictionary with the officer details
+        response_data = {
+            'id': officer.id,
+            'full_name': officer.full_name,
+            'phone_number': officer.phone_number,
+            'logon_name': officer.logon_name,
+            'password': officer.password,
+            'address': officer.address,
+            'status': officer.status,
+            'role': officer.role,
+            'rank': officer.rank,
+            'created_at': officer.created_at,
+            'department': department_name
+        }
+
+        return Response(response_data, status=status.HTTP_201_CREATED)
     else:
-        json_data = JSONRenderer().render(serializer.errors)
-        return HttpResponse(json_data, content_type='application/json', status=400)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['PUT'])
@@ -340,8 +365,8 @@ def add_complaint(request):
 
     complaint_data = {
         'complaint_type': data.get('complaint_type'),
-        'complaint_body': data.get('complaint_body'),
-        'complaint_location': data.get('complaint_location'),
+        'complaint_text': data.get('complaint_text'),
+        'incident_location': data.get('incident_location'),
         'complaint_status': data.get('complaint_status')
     }
 
