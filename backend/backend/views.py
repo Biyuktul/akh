@@ -35,61 +35,50 @@ def login_view(request):
         return Response({'error': 'Officer not found'}, status=400)
 
 
-@api_view(['POST'])
-def add_officer(request):
-    serializer = OfficerSerializer(data=request.data)
-    if serializer.is_valid():
-        # Get the department name from the request data
-        department_name = request.data.get('department')
-
-        # Find the department object based on the name
-        department = get_object_or_404(Department, dept_name=department_name)
-
-        # Add the department object to the serializer data
-        serializer.validated_data['department'] = department
-
-        # Save the serializer and retrieve the created officer object
-        officer = serializer.save()
-
-        # Create a response data dictionary with the officer details
-        response_data = {
-            'id': officer.id,
-            'full_name': officer.full_name,
-            'phone_number': officer.phone_number,
-            'logon_name': officer.logon_name,
-            'password': officer.password,
-            'address': officer.address,
-            'status': officer.status,
-            'role': officer.role,
-            'rank': officer.rank,
-            'created_at': officer.created_at,
-            'department': department_name
-        }
-
-        return Response(response_data, status=status.HTTP_201_CREATED)
-    else:
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-@api_view(['PUT'])
-def update_officer(request, id):
-    try:
-        office = officer.objects.get(id=id)
-    except officer.DoesNotExist:
-        return HttpResponse(status=404)
-
-    serializer = OfficerSerializer(office, data=request.data)
-    if serializer.is_valid():
-        serializer.save()
+@api_view(['GET', 'POST', 'PUT'])
+def officers(request, id=None):
+    if request.method == 'GET':
+        officers = officer.objects.all()
+        serializer = OfficerSerializer(officers, many=True)
         return Response(serializer.data)
-    return Response(serializer.errors, status=400)
 
+    elif request.method == 'POST':
+        serializer = OfficerSerializer(data=request.data)
+        if serializer.is_valid():
+            department_name = request.data.get('department')
+            department = get_object_or_404(
+                Department, dept_name=department_name)
+            serializer.validated_data['department'] = department
+            officer_d = serializer.save()
+            response_data = {
+                'id': officer_d.id,
+                'full_name': officer_d.full_name,
+                'phone_number': officer_d.phone_number,
+                'logon_name': officer_d.logon_name,
+                'password': officer_d.password,
+                'address': officer_d.address,
+                'status': officer_d.status,
+                'role': officer_d.role,
+                'rank': officer_d.rank,
+                'created_at': officer_d.created_at,
+                'department': department_name
+            }
 
-@api_view(['GET'])
-def get_officers(request):
-    officers = officer.objects.all()
-    serializer = OfficerSerializer(officers, many=True)
-    return Response(serializer.data)
+            return Response(response_data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method == 'PUT':
+        try:
+            officer_obj = officer.objects.get(id=id)
+        except officer.DoesNotExist:
+            return HttpResponse(status=404)
+
+        serializer = OfficerSerializer(officer_obj, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])
@@ -402,8 +391,8 @@ def get_complaints(request):
             'complaint_id': complaint.complaint_id,
             'complaint_type': complaint.complaint_type,
             'complaint_date': complaint.complaint_date.strftime("%Y-%m-%d"),
-            'complaint_body': complaint.complaint_body,
-            'complaint_location': complaint.complaint_location,
+            'complaint_body': complaint.complaint_text,
+            'complaint_location': complaint.incident_location,
             'complaint_status': complaint.complaint_status,
             'civilian_id': complaint.civilian.civilian_id,
             'civilian_name': complaint.civilian.name,

@@ -138,25 +138,14 @@ class Suspect(models.Model):
         db_table = 'suspect'
 
 
-class Criminals(models.Model):
-    criminal_id = models.CharField(
-        max_length=255, primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField(max_length=255)
-    DOB = models.DateField()
-    gender = models.CharField(max_length=10)
-    crime_type = models.CharField(max_length=255)
-    description = models.TextField()
-
-    class Meta:
-        db_table = 'criminals'
-
-
 class ActivityLog(models.Model):
     log_id = models.CharField(
         max_length=255, primary_key=True, default=uuid.uuid4, editable=False)
     activity_type = models.CharField(max_length=255)
     activity_time = models.DateTimeField()
-    id = models.ForeignKey(officer, on_delete=models.CASCADE, null=True)
+    officer = models.ForeignKey(officer, on_delete=models.CASCADE, null=True)
+    is_login_attempt = models.BooleanField(default=False)
+    is_login_success = models.BooleanField(default=False)
 
     class Meta:
         db_table = 'activity_log'
