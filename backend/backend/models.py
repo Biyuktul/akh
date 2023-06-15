@@ -226,19 +226,6 @@ class Post(models.Model):
         db_table = 'post'
 
 
-class Crime(models.Model):
-    crime_id = models.CharField(
-        max_length=255, primary_key=True, default=uuid.uuid4, editable=False)
-    suspect = models.ForeignKey('Suspect', on_delete=models.CASCADE, null=True)
-    date = models.DateField()
-    location = models.CharField(max_length=255)
-    type_of_crime = models.CharField(max_length=255)
-    description = models.TextField()
-
-    class Meta:
-        db_table = 'crime'
-
-
 class Warrant(models.Model):
     warrant_id = models.CharField(
         max_length=255, primary_key=True, default=uuid.uuid4, editable=False)

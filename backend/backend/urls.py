@@ -10,7 +10,6 @@ urlpatterns = [
          views.officers_per_month, name='officers-per-month'),
     path('officers/', views.officers, name='add_officer'),
     path('officers/<str:id>/', views.officers, name="update_officer"),
-    #     path('officers/', views.get_officers, name='get_officers'),
     path('update-officer-privileges/', views.update_officer_privileges,
          name='update_officer_privileges'),
     path('privileges/<str:id>/', views.get_privilages, name="get_privilages"),
