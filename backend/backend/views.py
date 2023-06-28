@@ -356,7 +356,6 @@ def add_complaint(request):
         'complaint_type': data.get('complaint_type'),
         'complaint_text': data.get('complaint_text'),
         'incident_location': data.get('incident_location'),
-        'complaint_status': data.get('complaint_status')
     }
 
     civilian_serializer = CivilianSerializer(data=civilian_data)
@@ -498,15 +497,16 @@ def get_all_posts(request):
     posts = Post.objects.all()
     serializer = PostSerializer(posts, many=True)
 
-    # Modify the serializer data to include officer's full name and post_id as key
     modified_data = []
     for item in serializer.data:
         officer_id = item['officer']
         officer_full_name = officer.objects.get(id=officer_id).full_name
         modified_item = {
-            'key': item['post_id'],
-            'name': officer_full_name,
-            **item
+            'name': item['person_name'],
+            'age': item['person_age'],
+            'sex': item['person_sex'],
+            'description': item['person_physical_description'],
+            'destinguishing_feature': item['person_distinguishing_features'],
         }
         modified_data.append(modified_item)
 
