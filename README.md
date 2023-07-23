@@ -1,16 +1,28 @@
-# Project Title
+# Police Station Record Management System - Backend (Django)
 
-Police Station Record Management System
+This repository contains the backend codebase for the Police Station Record Management System. The backend is built using Django, a powerful and flexible Python web framework.
 
-## Description
+## Features
 
-This is a web-based application that helps police stations manage their records efficiently. It is built using React for the frontend and Python Django for the backend. The system provides a user-friendly interface for officers to record, search and manage criminal records, case files, and other related information.
+- RESTful APIs to handle requests from the frontend (react).
+- Secure user authentication.
+- Integration with the frontend using API endpoints.
 
-## Installation
+## Technologies Used
 
-1. Clone the repository.
-2. Install the dependencies for the frontend:
-3. Install the dependencies for the backend:
-4. Create a SQL Server database and configure the backend settings in `backend/police_records/settings.py`.
-5. Run the development server for the backend: `python manage.py runserver`
-6. Navigate to `http://localhost:8000` in your web browser to use the application.
+- Django: A high-level Python web framework for rapid development and clean design.
+- Django Rest Framework (DRF): A powerful and flexible toolkit for building Web APIs.
+- Microsoft SQL: A relational database for data storage.
+
+## Getting Started
+
+To run the backend locally, follow these steps:
+
+1. Clone this repository to your local machine.
+2. Navigate to the project directory using the terminal.
+3. Install the required dependencies (we recommend using a virtual environment):
+4. pipenv install
+4. Set up the MSSQL database and update the database configuration in `settings.py`.
+5. Apply the database migrations
+6. Create a superuser for the Django admin panel:
+7. Start the development server
